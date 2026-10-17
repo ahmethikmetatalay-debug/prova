@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damla</title>
+<meta name="theme-color" content="#0E3B5C">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0E3B5C; color: #EAF6FF; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
+  header { padding: 18px 22px 0; }
+  header p { margin: 0; opacity: .7; font-size: 14px; }
+  header h1 { margin: 2px 0 0; font-size: 28px; letter-spacing: -.02em; }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 12px 22px; }
+  .ring { position: relative; width: 230px; height: 230px; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .val { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .ring b { font-size: 44px; display: block; letter-spacing: -.03em; }
+  .ring span { opacity: .7; font-size: 14px; }
+  .btns { display: flex; gap: 12px; }
+  .btns button { border: 0; border-radius: 18px; padding: 16px 20px; font-size: 17px; font-weight: 600; background: #5CC8FF; color: #062236; transition: transform .1s; }
+  .btns button:active { transform: scale(.94); }
+  .btns button.alt { background: rgba(255,255,255,.12); color: #EAF6FF; }
+  .log { width: 100%; max-width: 360px; font-size: 14px; opacity: .8; display: flex; justify-content: space-between; }
+  nav { display: flex; border-top: 1px solid rgba(255,255,255,.12); background: #0B3150; }
+  nav button { flex: 1; border: 0; background: none; color: #EAF6FF; opacity: .55; padding: 10px 0 12px; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  nav button.on { opacity: 1; color: #5CC8FF; }
+  nav svg { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+  <header><p id="date"></p><h1>Bugün</h1></header>
+  <main>
+    <div class="ring">
+      <svg width="230" height="230" viewBox="0 0 230 230"><circle cx="115" cy="115" r="100" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="18"/><circle id="arc" cx="115" cy="115" r="100" fill="none" stroke="#5CC8FF" stroke-width="18" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="628.3" style="transition:stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1)"/></svg>
+      <div class="val"><div><b id="ml">0 ml</b><span>hedef 2.000 ml</span></div></div>
+    </div>
+    <div class="btns">
+      <button data-ml="200">+ Bardak</button>
+      <button data-ml="500">+ Şişe</button>
+      <button class="alt" id="undo">Geri al</button>
+    </div>
+    <div class="log"><span id="count">0 kez içildi</span><span id="last"></span></div>
+  </main>
+  <nav>
+    <button class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5c-.3 0-.6.2-.8.4C9.6 5 5.5 10.2 5.5 14a6.5 6.5 0 0 0 13 0c0-3.8-4.1-9-5.7-11.1a1 1 0 0 0-.8-.4z"/></svg>Bugün</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Geçmiş</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profil</button>
+  </nav>
+<script>
+  const KEY = 'damla-' + new Date().toISOString().slice(0, 10);
+  let log = [];
+  try { log = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+  document.getElementById('date').textContent = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' });
+  function render() {
+    const total = log.reduce((s, x) => s + x.ml, 0);
+    document.getElementById('ml').textContent = total.toLocaleString('tr-TR') + ' ml';
+    document.getElementById('arc').style.strokeDashoffset = 628.3 * (1 - Math.min(total / 2000, 1));
+    document.getElementById('count').textContent = log.length + ' kez içildi';
+    const l = log[log.length - 1];
+    document.getElementById('last').textContent = l ? 'Son: ' + new Date(l.t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '';
+    try { localStorage.setItem(KEY, JSON.stringify(log)); } catch (e) {}
+  }
+  document.querySelectorAll('[data-ml]').forEach(b => b.onclick = () => { log.push({ ml: +b.dataset.ml, t: Date.now() }); if (navigator.vibrate) navigator.vibrate(8); render(); });
+  document.getElementById('undo').onclick = () => { log.pop(); render(); };
+  document.querySelectorAll('nav button').forEach(b => b.onclick = () => { document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b)); });
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Prova</title>
+<meta name="description" content="HTML mobil prototiplerini telefonda gerçek uygulama gibi test et.">
+<meta name="theme-color" content="#1F4A3D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prova">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --mat: #CFE0D3;
+  --mat-line: rgba(16, 55, 40, .09);
+  --mat-line-major: rgba(16, 55, 40, .17);
+  --ink: #10291F;
+  --ink-soft: #4A6558;
+  --surface: #F4F8F2;
+  --surface-2: #E4EDE5;
+  --hairline: rgba(16, 41, 31, .12);
+  --accent: #F4C543;
+  --accent-ink: #231C05;
+  --danger: #C8423B;
+  --scrim: rgba(8, 24, 18, .45);
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --mat: #1F4A3D;
+    --mat-line: rgba(230, 240, 220, .06);
+    --mat-line-major: rgba(230, 240, 220, .13);
+    --ink: #F1F5EC;
+    --ink-soft: #A9C2B5;
+    --surface: #173A30;
+    --surface-2: #21483C;
+    --hairline: rgba(241, 245, 236, .12);
+    --danger: #FF7A70;
+    --scrim: rgba(0, 0, 0, .55);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-line-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-line-major) 1px, transparent 1px),
+    linear-gradient(var(--mat-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-line) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+  background-attachment: fixed;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+button { font: inherit; color: inherit; }
+input, textarea { font: inherit; font-size: 16px; color: var(--ink); -webkit-user-select: text; user-select: text; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hidden { display: none !important; }
+
+/* ---------- Ana ekran ---------- */
+#home {
+  min-height: 100%;
+  padding: calc(var(--sat) + 20px) calc(var(--sar) + 20px) calc(var(--sab) + 32px) calc(var(--sal) + 20px);
+  max-width: 640px;
+  margin: 0 auto;
+}
+.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 44px;
+  line-height: .95;
+  letter-spacing: -.035em;
+  margin: 0;
+}
+.count { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; }
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--hairline);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  display: grid; place-items: center; cursor: pointer;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.icon-btn svg { width: 22px; height: 22px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 22px 8px;
+}
+.tile {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  touch-action: manipulation;
+}
+.app-icon {
+  width: 62px; height: 62px; border-radius: 15px;
+  display: grid; place-items: center;
+  font-size: 32px; line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 -2px 0 rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.18);
+  transition: transform .15s ease;
+}
+.tile:active .app-icon, .tile.pressing .app-icon { transform: scale(.92); }
+.tile-label {
+  font-size: 12px; max-width: 76px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-align: center;
+}
+.add-icon {
+  background: transparent; box-shadow: none;
+  border: 2px dashed var(--ink-soft);
+  color: var(--ink-soft);
+}
+.add-icon svg { width: 26px; height: 26px; }
+.home-hint { margin: 36px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; max-width: 34em; }
+
+.empty { padding: 8px 0 0; }
+.empty h2 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 26px; line-height: 1.15; letter-spacing: -.02em;
+  margin: 0 0 12px; max-width: 14em;
+}
+.empty p { margin: 0 0 24px; color: var(--ink-soft); line-height: 1.55; max-width: 32em; }
+.empty .actions-col { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.empty .actions-col .link-btn { padding-left: 4px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 50px; padding: 0 22px; white-space: nowrap;
+  border-radius: 14px; border: 0; cursor: pointer;
+  font-weight: 600; font-size: 16px;
+}
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn-quiet { background: var(--surface-2); color: var(--ink); }
+.sheet .btn-quiet { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--hairline); }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: .5; }
+.link-btn { background: none; border: 0; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; padding: 10px; cursor: pointer; font-size: 14px; }
+
+/* ---------- Alt sayfalar (sheet) ---------- */
+.scrim {
+  position: fixed; inset: 0; background: var(--scrim);
+  z-index: 50; opacity: 0; transition: opacity .2s ease;
+}
+.scrim.show { opacity: 1; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 51;
+  max-width: 560px; margin: 0 auto;
+  max-height: calc(100% - var(--sat) - 24px);
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--surface); color: var(--ink);
+  border-radius: 22px 22px 0 0;
+  padding: 10px calc(var(--sar) + 20px) calc(var(--sab) + 20px) calc(var(--sal) + 20px);
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.sheet.show { transform: translateY(0); }
+.sheet.over-stage, .scrim.over-stage { z-index: 120; }
+.grabber { width: 38px; height: 5px; border-radius: 3px; background: var(--hairline); margin: 0 auto 16px; }
+.sheet h3 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 22px; letter-spacing: -.015em; margin: 0 0 4px;
+}
+.sheet .sub { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; line-height: 1.45; }
+.sheet-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.sheet-head .app-icon { width: 54px; height: 54px; font-size: 28px; border-radius: 13px; flex: none; }
+.sheet-head h3 { margin: 0; }
+.sheet-head .sub { margin: 2px 0 0; }
+
+.rows { display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: var(--surface-2); }
+.row {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 54px; padding: 10px 16px;
+  background: none; border: 0; text-align: left; cursor: pointer; width: 100%;
+  font-size: 16px;
+}
+.row + .row { border-top: 1px solid var(--hairline); }
+.row svg { width: 22px; height: 22px; flex: none; color: var(--ink-soft); }
+.row .row-text { flex: 1; min-width: 0; }
+.row-note { display: block; font-size: 13px; color: var(--ink-soft); margin-top: 2px; line-height: 1.4; }
+.row.danger, .row.danger svg { color: var(--danger); }
+.rows + .rows, .rows + .field, .field + .rows { margin-top: 14px; }
+
+.field { display: block; margin-bottom: 16px; }
+.field > span { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
+.input, .textarea {
+  width: 100%; border: 1px solid var(--hairline); border-radius: 12px;
+  background: var(--surface-2); padding: 12px 14px; outline: none;
+}
+.input:focus, .textarea:focus { border-color: var(--accent); }
+.textarea { min-height: 180px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.45; }
+.inline { display: flex; gap: 10px; }
+.inline .input { flex: 1; }
+.emoji-input { width: 64px; text-align: center; font-size: 26px; padding: 6px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch {
+  width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+}
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.toggle-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface-2); border-radius: 16px; margin-bottom: 16px; }
+.toggle-row .row-text { flex: 1; font-size: 16px; }
+.switch { position: relative; width: 51px; height: 31px; flex: none; }
+.switch input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch .knob { position: absolute; inset: 0; border-radius: 16px; background: var(--hairline); transition: background .2s; }
+.switch .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.switch input:checked + .knob { background: #3DBE8B; }
+.switch input:checked + .knob::after { transform: translateX(20px); }
+.switch input:focus-visible + .knob { outline: 2px solid var(--accent); outline-offset: 2px; }
+.actions { display: flex; gap: 10px; margin-top: 18px; }
+.actions .btn { flex: 1; }
+.error { color: var(--danger); font-size: 14px; margin: -6px 0 14px; line-height: 1.45; }
+.help { font-size: 15px; line-height: 1.55; }
+.help h4 { font-family: var(--font-display); font-size: 17px; margin: 18px 0 6px; }
+.help p { margin: 0 0 10px; color: var(--ink-soft); }
+.help b { color: var(--ink); font-weight: 600; }
+
+/* ---------- Prototip sahnesi ---------- */
+#stage {
+  position: fixed; inset: 0; z-index: 100;
+  background: #fff;
+  will-change: transform;
+}
+#stage iframe {
+  position: absolute; border: 0; display: block;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: transparent;
+}
+#stage.safe iframe {
+  top: var(--sat); left: var(--sal);
+  width: calc(100% - var(--sal) - var(--sar));
+  height: calc(100% - var(--sat) - var(--sab));
+}
+#fab {
+  position: absolute; right: calc(var(--sar) + 8px); top: 45%;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 0; background: rgba(20, 30, 25, .5); color: #fff;
+  display: grid; place-items: center; z-index: 2;
+  opacity: .45; touch-action: none; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#fab svg { width: 20px; height: 20px; }
+
+/* ---------- Kurulum ekranı ---------- */
+#install {
+  position: fixed; inset: 0; z-index: 90; overflow-y: auto;
+  background: inherit;
+  padding: calc(var(--sat) + 28px) calc(var(--sar) + 24px) calc(var(--sab) + 24px) calc(var(--sal) + 24px);
+}
+.install-inner { max-width: 460px; margin: 0 auto; }
+.install-mark { width: 72px; height: 72px; border-radius: 17px; display: block; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
+#install h1 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 34px; line-height: 1.05; letter-spacing: -.03em; margin: 0 0 12px;
+}
+#install .lede { color: var(--ink-soft); line-height: 1.55; margin: 0 0 28px; }
+.steps { list-style: none; counter-reset: s; padding: 0; margin: 0 0 24px; }
+.steps li {
+  counter-increment: s; position: relative;
+  padding: 14px 16px 14px 56px; margin-bottom: 10px;
+  background: var(--surface); border-radius: 16px; line-height: 1.45;
+}
+.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 13px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink);
+  font-weight: 700; font-size: 14px; display: grid; place-items: center;
+}
+.steps li .k { display: inline-flex; vertical-align: -5px; }
+.steps li .k svg { width: 20px; height: 20px; }
+.note { font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 20px; padding: 12px 14px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--surface) 60%, transparent); border-radius: 0 10px 10px 0; }
+
+/* ---------- Bildirim ---------- */
+#toast {
+  position: fixed; left: 50%; bottom: calc(var(--sab) + 24px); z-index: 200;
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  background: #10291F; color: #F1F5EC;
+  padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.4;
+  max-width: calc(100% - 32px); width: max-content;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  transition: opacity .2s, transform .2s;
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+#toast.top { bottom: auto; top: calc(var(--sat) + 14px); transform: translate(-50%, -20px); }
+#toast.top.show { transform: translate(-50%, 0); }
+#toast button { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 9px; padding: 7px 12px; font-weight: 600; font-size: 14px; cursor: pointer; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet, .scrim, #toast, .app-icon { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<main id="home" aria-live="polite"></main>
+
+<div id="install" class="hidden"></div>
+
+<div id="toast" role="status"></div>
+
+<input id="file-html" type="file" accept="text/html,.html,.htm" multiple class="hidden">
+<input id="file-backup" type="file" accept="application/json,.json" class="hidden">
+
+<script>
+(() => {
+'use strict';
+
+/* ======================= Yardımcılar ======================= */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const UA = navigator.userAgent;
+const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/i.test(UA);
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true;
+
+const COLORS = ['#F4C543', '#F29E4C', '#EF6F8E', '#7C5CDB', '#5B8DEF', '#47B5C8', '#3DBE8B', '#2E3A46'];
+const EMOJIS = ['📱', '🛒', '📅', '💬', '🎵', '📷', '🗺️', '💡', '🧾', '🏃', '🍽️', '📚', '🎮', '💳', '🌤️', '🧩'];
+const hash = s => { let h = 0; for (const c of s) h = (h * 31 + c.codePointAt(0)) | 0; return Math.abs(h); };
+const fmtSize = b => b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(0) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+const fmtDate = t => new Date(t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const firstGrapheme = s => {
+  s = (s || '').trim();
+  if (!s) return '';
+  if (window.Intl && Intl.Segmenter) { for (const g of new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(s)) return g.segment; }
+  return Array.from(s)[0];
+};
+
+const ICONS = {
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
+  paste: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>',
+  share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>',
+  frame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M6 6h12M6 18h12"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+  upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></svg>',
+  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17.5" r=".6" fill="currentColor"/></svg>',
+  dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></svg>',
+  iosShare: '<svg viewBox="0 0 24 24" fill="none" stroke="#2F7CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>',
+  addBox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></svg>'
+};
+
+/* ======================= Tercihler ======================= */
+const PREF_KEY = 'prova:prefs';
+const prefs = (() => {
+  let p = {};
+  try { p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}'); } catch (e) {}
+  return Object.assign({ fab: false, hintCount: 0, skipInstall: false }, p);
+})();
+const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} };
+
+/* ======================= Veritabanı (IndexedDB) ======================= */
+const DB = {
+  _db: null,
+  open() {
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('prova', 1);
+      r.onupgradeneeded = () => {
+        const db = r.result;
+        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('html')) db.createObjectStore('html', { keyPath: 'id' });
+      };
+      r.onsuccess = () => { this._db = r.result; res(r.result); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async tx(stores, mode, fn) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const t = db.transaction(stores, mode);
+      let out;
+      t.oncomplete = () => res(out);
+      t.onerror = () => rej(t.error);
+      t.onabort = () => rej(t.error || new Error('İşlem iptal edildi'));
+      out = fn(t);
+    });
+  },
+  req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async allMeta() {
+    const db = await this.open();
+    return this.req(db.transaction('meta').objectStore('meta').getAll());
+  },
+  async html(id) {
+    const db = await this.open();
+    const r = await this.req(db.transaction('html').objectStore('html').get(id));
+    return r ? r.html : null;
+  },
+  putMeta(meta) { return this.tx(['meta'], 'readwrite', t => { t.objectStore('meta').put(meta); }); },
+  putApp(meta, html) {
+    return this.tx(['meta', 'html'], 'readwrite', t => {
+      t.objectStore('meta').put(meta);
+      t.objectStore('html').put({ id: meta.id, html });
+    });
+  },
+  remove(id) {
+    return this.tx(['meta', 'html'], 'readwrite', t => {
+      t.objectStore('meta').delete(id);
+      t.objectStore('html').delete(id);
+    });
+  }
+};
+
+let apps = [];
+async function loadApps() {
+  apps = (await DB.allMeta()).sort((a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
+}
+
+/* ======================= Bildirim ======================= */
+let toastTimer;
+function toast(msg, action, onAction, ms = 3200) {
+  const el = $('#toast');
+  el.innerHTML = `<span>${esc(msg)}</span>` + (action ? `<button type="button">${esc(action)}</button>` : '');
+  if (action) $('button', el).onclick = () => { el.classList.remove('show'); onAction(); };
+  el.classList.toggle('top', !!current);
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), action ? 8000 : ms);
+}
+
+/* ======================= Alt sayfa (sheet) ======================= */
+let activeSheet = null;
+function openSheet(html, { overStage = false, onMount } = {}) {
+  closeSheet(true);
+  const scrim = document.createElement('div');
+  scrim.className = 'scrim' + (overStage ? ' over-stage' : '');
+  const sheet = document.createElement('div');
+  sheet.className = 'sheet' + (overStage ? ' over-stage' : '');
+  sheet.setAttribute('role', 'dialog');
+  sheet.setAttribute('aria-modal', 'true');
+  sheet.innerHTML = '<div class="grabber"></div>' + html;
+  document.body.append(scrim, sheet);
+  scrim.onclick = () => closeSheet();
+  // Aşağı kaydırarak kapatma
+  let y0 = null, dy = 0;
+  sheet.addEventListener('touchstart', e => { if (sheet.scrollTop <= 0) { y0 = e.touches[0].clientY; dy = 0; } }, { passive: true });
+  sheet.addEventListener('touchmove', e => {
+    if (y0 === null) return;
+    dy = e.touches[0].clientY - y0;
+    if (dy > 0) { sheet.style.transition = 'none'; sheet.style.transform = `translateY(${dy}px)`; }
+  }, { passive: true });
+  sheet.addEventListener('touchend', () => {
+    if (y0 === null) return;
+    sheet.style.transition = ''; sheet.style.transform = '';
+    if (dy > 90) closeSheet();
+    y0 = null;
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => { scrim.classList.add('show'); sheet.classList.add('show'); }));
+  activeSheet = { scrim, sheet };
+  if (onMount) onMount(sheet);
+  return sheet;
+}
+function closeSheet(instant) {
+  if (!activeSheet) return;
+  const { scrim, sheet } = activeSheet;
+  activeSheet = null;
+  if (instant || reduceMotion) { scrim.remove(); sheet.remove(); return; }
+  scrim.classList.remove('show'); sheet.classList.remove('show');
+  setTimeout(() => { scrim.remove(); sheet.remove(); }, 300);
+}
+const row = (act, icon, text, note = '', cls = '') =>
+  `<button type="button" class="row ${cls}" data-act="${act}">${ICONS[icon]}<span class="row-text">${esc(text)}${note ? `<span class="row-note">${esc(note)}</span>` : ''}</span></button>`;
+const iconTile = (a, cls = 'app-icon') => `<span class="${cls}" style="background:${esc(a.color)}" aria-hidden="true">${esc(a.emoji)}</span>`;
+
+/* ======================= Ana ekran ======================= */
+function renderHome() {
+  const home = $('#home');
+  const top = `
+    <header class="top">
+      <div>
+        <h1 class="wordmark">Prova</h1>
+        <p class="count">${apps.length ? `${apps.length} prototip` : 'Prototip başlatıcı'}</p>
+      </div>
+      <button type="button" class="icon-btn" id="btn-settings" aria-label="Ayarlar">${ICONS.gear}</button>
+    </header>`;
+
+  if (!apps.length) {
+    home.innerHTML = top + `
+      <section class="empty">
+        <h2>Claude’la yaptığın prototipi buraya ekle, uygulama gibi aç.</h2>
+        <p>HTML dosyasını seç ya da kodu yapıştır. Prova onu telefonunda saklar ve adres çubuğu olmadan, tam ekran çalıştırır.</p>
+        <div class="actions-col">
+          <button type="button" class="btn btn-primary" id="btn-add-empty">${ICONS.plus} Prototip ekle</button>
+          <button type="button" class="link-btn" id="btn-sample">Örnek prototiple dene</button>
+        </div>
+      </section>`;
+    $('#btn-add-empty').onclick = () => openAddSheet();
+    $('#btn-sample').onclick = addSample;
+  } else {
+    home.innerHTML = top + `
+      <section class="grid" id="grid">
+        ${apps.map(a => `
+          <button type="button" class="tile" data-id="${a.id}" aria-label="${esc(a.name)} – aç">
+            ${iconTile(a)}
+            <span class="tile-label">${esc(a.name)}</span>
+          </button>`).join('')}
+        <button type="button" class="tile" id="btn-add" aria-label="Prototip ekle">
+          <span class="app-icon add-icon" aria-hidden="true">${ICONS.plus}</span>
+          <span class="tile-label">Ekle</span>
+        </button>
+      </section>
+      <p class="home-hint">Seçenekler için simgeye basılı tut. Prototip açıkken menüyü getirmek için ekrana iki parmakla yarım saniye dokun ve bekle.</p>`;
+    $('#btn-add').onclick = () => openAddSheet();
+    bindTiles();
+  }
+  $('#btn-settings').onclick = openSettings;
+}
+
+function bindTiles() {
+  document.querySelectorAll('.tile[data-id]').forEach(tile => {
+    const id = tile.dataset.id;
+    let timer = null, fired = false, sx = 0, sy = 0;
+    const cancel = () => { clearTimeout(timer); timer = null; tile.classList.remove('pressing'); };
+    tile.addEventListener('pointerdown', e => {
+      fired = false; sx = e.clientX; sy = e.clientY;
+      tile.classList.add('pressing');
+      timer = setTimeout(() => {
+        fired = true; cancel();
+        if (navigator.vibrate) navigator.vibrate(12);
+        openAppSheet(id);
+      }, 480);
+    });
+    tile.addEventListener('pointermove', e => { if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) cancel(); });
+    tile.addEventListener('pointerup', cancel);
+    tile.addEventListener('pointercancel', cancel);
+    tile.addEventListener('pointerleave', cancel);
+    tile.addEventListener('contextmenu', e => { e.preventDefault(); if (!fired) { fired = true; cancel(); openAppSheet(id); } });
+    tile.addEventListener('click', e => { if (fired) { e.preventDefault(); fired = false; return; } openApp(id, $('.app-icon', tile)); });
+  });
+}
+
+/* ======================= Prototip ekleme ======================= */
+const looksLikeHTML = s => /<(!doctype|html|head|body|div|main|script|style|svg|canvas|section|p|h1|button)\b/i.test(s);
+function validateHTML(s) {
+  if (!s || !s.trim()) return 'İçerik boş.';
+  if (!looksLikeHTML(s) && /(^|\n)\s*(import\s.+from\s|export\s+default)/.test(s))
+    return 'Bu bir React/JSX bileşeni, HTML değil. Claude’dan “tek dosyalık, kendi başına çalışan HTML olarak” vermesini isteyin.';
+  if (!looksLikeHTML(s)) return 'Bu içerik HTML gibi görünmüyor. Claude’dan aldığınız .html dosyasının tamamını ekleyin.';
+  return null;
+}
+const titleFrom = (html, fallback) => {
+  const m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const t = m && m[1].replace(/\s+/g, ' ').trim();
+  return (t || fallback || 'Prototip').slice(0, 40);
+};
+
+async function addOrUpdate(html, { targetId, name } = {}) {
+  const now = Date.now();
+  if (targetId) {
+    const meta = apps.find(a => a.id === targetId);
+    meta.updatedAt = now; meta.size = new Blob([html]).size; meta.version = (meta.version || 1) + 1;
+    await DB.putApp(meta, html);
+    await loadApps();
+    renderHome();
+    return meta;
+  }
+  const id = uid();
+  const finalName = (name || '').trim() || titleFrom(html);
+  const h = hash(finalName + id);
+  const meta = {
+    id, name: finalName,
+    emoji: EMOJIS[h % EMOJIS.length], color: COLORS[(h >> 3) % COLORS.length],
+    safeArea: true, createdAt: now, updatedAt: now, order: now,
+    size: new Blob([html]).size, version: 1
+  };
+  await DB.putApp(meta, html);
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  await loadApps();
+  renderHome();
+  return meta;
+}
+
+let addTarget = null;
+function openAddSheet(targetId = null) {
+  addTarget = targetId;
+  const t = targetId && apps.find(a => a.id === targetId);
+  openSheet(`
+    <h3>${t ? 'Yeni sürüm yükle' : 'Prototip ekle'}</h3>
+    <p class="sub">${t ? `“${esc(t.name)}” yeni HTML ile değiştirilecek. Simgesi ve kayıtlı verileri korunur.` : 'Claude’dan aldığın tek dosyalık HTML’i ekle.'}</p>
+    <div class="rows">
+      ${row('file', 'file', 'Dosyadan seç', 'İndirilenler, Dosyalar veya iCloud Drive')}
+      ${row('paste', 'paste', 'Kodu yapıştır', 'Claude’daki kodu kopyalayıp buraya yapıştır')}
+      ${row('link', 'link', 'Linkten al', 'GitHub, Gist veya erişime açık bir .html adresi')}
+    </div>`, {
+    onMount: s => {
+      s.querySelector('[data-act=file]').onclick = () => { $('#file-html').multiple = !addTarget; $('#file-html').click(); };
+      s.querySelector('[data-act=paste]').onclick = () => openPasteSheet();
+      s.querySelector('[data-act=link]').onclick = () => openLinkSheet();
+    }
+  });
+}
+
+$('#file-html').addEventListener('change', async e => {
+  const files = [...e.target.files];
+  e.target.value = '';
+  if (!files.length) return;
+  closeSheet();
+  let ok = 0, last = null;
+  for (const f of files) {
+    const html = await f.text();
+    const err = validateHTML(html);
+    if (err) { toast(`${f.name}: ${err}`, null, null, 6000); continue; }
+    last = await addOrUpdate(html, addTarget ? { targetId: addTarget } : { name: titleFrom(html, f.name.replace(/\.html?$/i, '')) });
+    ok++;
+    if (addTarget) break;
+  }
+  if (!ok) return;
+  if (addTarget) toast(`“${last.name}” güncellendi`, 'Aç', () => openApp(last.id));
+  else toast(ok > 1 ? `${ok} prototip eklendi` : `“${last.name}” eklendi`, ok === 1 ? 'Aç' : null, () => openApp(last.id));
+  addTarget = null;
+});
+
+function openPasteSheet() {
+  const t = addTarget && apps.find(a => a.id === addTarget);
+  openSheet(`
+    <h3>${t ? 'Yeni sürümü yapıştır' : 'Kodu yapıştır'}</h3>
+    <p class="sub">HTML’in tamamını yapıştır: &lt;!DOCTYPE html&gt; satırından son &lt;/html&gt; etiketine kadar.</p>
+    <label class="field"><span>HTML kodu</span><textarea class="textarea" id="paste-area" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="<!DOCTYPE html>…"></textarea></label>
+    <div class="error hidden" id="paste-err"></div>
+    ${t ? '' : '<label class="field"><span>Ad (boş bırakırsan sayfa başlığı kullanılır)</span><input class="input" id="paste-name" maxlength="40" autocomplete="off"></label>'}
+    <div class="actions">
+      <button type="button" class="btn btn-quiet" id="paste-clip">Panodan al</button>
+      <button type="button" class="btn btn-primary" id="paste-go">${t ? 'Güncelle' : 'Ekle'}</button>
+    </div>`, {
+    onMount: s => {
+      const area = $('#paste-area', s), err = $('#paste-err', s);
+      $('#paste-clip', s).onclick = async () => {
+        try { area.value = await navigator.clipboard.readText(); }
+        catch (e) { area.focus(); toast('Pano okunamadı. Metin kutusuna basılı tutup Yapıştır’ı seç.'); }
+      };
+      $('#paste-go', s).onclick = async () => {
+        const html = area.value;
+        const v = validateHTML(html);
+        if (v) { err.textContent = v; err.classList.remove('hidden'); return; }
+        const target = addTarget;
+        const meta = await addOrUpdate(html, target ? { targetId: target } : { name: ($('#paste-name', s) || {}).value });
+        closeSheet(); addTarget = null;
+        toast(target ? `“${meta.name}” güncellendi` : `“${meta.name}” eklendi`, 'Aç', () => openApp(meta.id));
+      };
+    }
+  });
+}
+
+function normalizeUrl(u) {
+  u = u.trim();
+  let m = u.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/);
+  if (m) return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`;
+  m = u.match(/^https:\/\/gist\.github\.com\/([^/]+)\/([0-9a-f]+)\/?$/i);
+  if (m) return `https://gist.githubusercontent.com/${m[1]}/${m[2]}/raw`;
+  return u;
+}
+function openLinkSheet() {
+  const t = addTarget && apps.find(a => a.id === addTarget);
+  openSheet(`
+    <h3>Linkten al</h3>
+    <p class="sub">Dosyanın ham içeriğine giden bir adres gerekir. GitHub ve Gist linklerini otomatik olarak ham adrese çeviririm. claude.ai linkleri giriş gerektirdiği için buradan açılmaz.</p>
+    <label class="field"><span>Adres</span><input class="input" id="link-url" type="url" inputmode="url" autocapitalize="off" autocomplete="off" placeholder="https://…/prototip.html"></label>
+    <div class="error hidden" id="link-err"></div>
+    <div class="actions"><button type="button" class="btn btn-primary" id="link-go">${t ? 'Güncelle' : 'Ekle'}</button></div>`, {
+    onMount: s => {
+      const err = $('#link-err', s), btn = $('#link-go', s);
+      btn.onclick = async () => {
+        const url = normalizeUrl($('#link-url', s).value);
+        if (!/^https?:\/\//.test(url)) { err.textContent = 'Adres https:// ile başlamalı.'; err.classList.remove('hidden'); return; }
+        btn.disabled = true; btn.textContent = 'İndiriliyor…';
+        try {
+          const r = await fetch(url, { cache: 'no-store' });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const html = await r.text();
+          const v = validateHTML(html);
+          if (v) throw new Error(v);
+          const target = addTarget;
+          const meta = await addOrUpdate(html, target ? { targetId: target } : { name: titleFrom(html, decodeURIComponent(url.split('/').pop() || '').replace(/\.html?$/i, '')) });
+          closeSheet(); addTarget = null;
+          toast(target ? `“${meta.name}” güncellendi` : `“${meta.name}” eklendi`, 'Aç', () => openApp(meta.id));
+        } catch (e) {
+          const msg = e instanceof TypeError ? 'Bu adres dışarıdan okunmaya izin vermiyor (CORS). Dosyayı indirip “Dosyadan seç” ile ekleyin.' : e.message;
+          err.textContent = msg; err.classList.remove('hidden');
+          btn.disabled = false; btn.textContent = t ? 'Güncelle' : 'Ekle';
+        }
+      };
+    }
+  });
+}
+
+async function addSample() {
+  try {
+    const r = await fetch('./ornek.html');
+    if (!r.ok) throw new Error();
+    const meta = await addOrUpdate(await r.text(), { name: 'Damla' });
+    meta.emoji = '💧'; meta.color = '#5B8DEF';
+    await DB.putMeta(meta); await loadApps(); renderHome();
+    toast('Örnek eklendi', 'Aç', () => openApp(meta.id));
+  } catch (e) { toast('Örnek dosyası yüklenemedi.'); }
+}
+
+/* ======================= Prototip seçenekleri ======================= */
+function openAppSheet(id) {
+  const a = apps.find(x => x.id === id);
+  if (!a) return;
+  openSheet(`
+    <div class="sheet-head">
+      ${iconTile(a)}
+      <div><h3>${esc(a.name)}</h3><p class="sub">${fmtSize(a.size || 0)} · sürüm ${a.version || 1} · ${fmtDate(a.updatedAt)}</p></div>
+    </div>
+    <div class="rows">
+      ${row('open', 'play', 'Aç')}
+      ${row('update', 'upload', 'Yeni sürüm yükle', 'Claude’dan güncel hâlini aldığında')}
+      ${row('edit', 'edit', 'Adı, simgeyi ve ekran ayarını düzenle')}
+      ${row('export', 'share', 'HTML dosyası olarak paylaş')}
+    </div>
+    <div class="rows">
+      ${row('delete', 'trash', 'Sil', '', 'danger')}
+    </div>`, {
+    onMount: s => {
+      s.querySelector('[data-act=open]').onclick = () => { closeSheet(true); openApp(id); };
+      s.querySelector('[data-act=update]').onclick = () => openAddSheet(id);
+      s.querySelector('[data-act=edit]').onclick = () => openEditSheet(id);
+      s.querySelector('[data-act=export]').onclick = async () => {
+        const html = await DB.html(id);
+        shareFile(new File([html], safeFileName(a.name) + '.html', { type: 'text/html' }));
+      };
+      const del = s.querySelector('[data-act=delete]');
+      let armed = false;
+      del.onclick = async () => {
+        if (!armed) { armed = true; $('.row-text', del).textContent = 'Silmek için tekrar dokun'; return; }
+        await DB.remove(id);
+        clearAppStorage(id);
+        await loadApps(); renderHome(); closeSheet();
+        toast(`“${a.name}” silindi`);
+      };
+    }
+  });
+}
+
+function openEditSheet(id) {
+  const a = { ...apps.find(x => x.id === id) };
+  openSheet(`
+    <div class="sheet-head" id="edit-preview">${iconTile(a)}<div><h3>Düzenle</h3></div></div>
+    <label class="field"><span>Ad</span><input class="input" id="ed-name" maxlength="40" value="${esc(a.name)}" autocomplete="off"></label>
+    <div class="field"><span>Simge</span>
+      <div class="inline" style="align-items:center">
+        <input class="input emoji-input" id="ed-emoji" value="${esc(a.emoji)}" aria-label="Emoji" autocomplete="off">
+        <div class="swatches" role="group" aria-label="Renk">
+          ${COLORS.map(c => `<button type="button" class="swatch" style="background:${c}" data-c="${c}" aria-label="Renk ${c}" aria-pressed="${c === a.color}"></button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <span class="row-text">Çentik ve alt çubuk için boşluk bırak<span class="row-note">Kapalıysa prototip ekranın en üstüne kadar uzanır. Prototip kendi boşluklarını ayarlıyorsa kapat.</span></span>
+      <label class="switch"><input type="checkbox" id="ed-safe" ${a.safeArea !== false ? 'checked' : ''} aria-label="Kenar boşlukları"><span class="knob"></span></label>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-quiet" id="ed-cancel">Vazgeç</button>
+      <button type="button" class="btn btn-primary" id="ed-save">Kaydet</button>
+    </div>`, {
+    onMount: s => {
+      const preview = () => { $('#edit-preview .app-icon', s).outerHTML = iconTile(a); };
+      $('#ed-emoji', s).addEventListener('input', e => { const g = firstGrapheme(e.target.value); if (g) { a.emoji = g; preview(); } });
+      $('#ed-emoji', s).addEventListener('blur', e => { e.target.value = a.emoji; });
+      s.querySelectorAll('.swatch').forEach(b => b.onclick = () => {
+        a.color = b.dataset.c;
+        s.querySelectorAll('.swatch').forEach(x => x.setAttribute('aria-pressed', x === b));
+        preview();
+      });
+      $('#ed-cancel', s).onclick = () => closeSheet();
+      $('#ed-save', s).onclick = async () => {
+        a.name = $('#ed-name', s).value.trim() || a.name;
+        a.safeArea = $('#ed-safe', s).checked;
+        await DB.putMeta(a);
+        await loadApps(); renderHome(); closeSheet();
+        toast('Kaydedildi');
+      };
+    }
+  });
+}
+
+/* ======================= Dosya paylaşma / yedekleme ======================= */
+const safeFileName = s => (s || 'prototip').replace(/[\\/:*?"<>|]+/g, '-').trim().slice(0, 60) || 'prototip';
+async function shareFile(file) {
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: file.name }); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = url; a.download = file.name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+async function backupAll() {
+  const out = { app: 'prova', format: 1, exportedAt: new Date().toISOString(), apps: [] };
+  for (const m of apps) out.apps.push({ ...m, html: await DB.html(m.id) });
+  const stamp = new Date().toISOString().slice(0, 10);
+  shareFile(new File([JSON.stringify(out)], `prova-yedek-${stamp}.json`, { type: 'application/json' }));
+}
+$('#file-backup').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (data.app !== 'prova' || !Array.isArray(data.apps)) throw new Error();
+    for (const item of data.apps) {
+      const { html, ...meta } = item;
+      if (!meta.id || typeof html !== 'string') continue;
+      await DB.putApp(meta, html);
+    }
+    await loadApps(); renderHome(); closeSheet();
+    toast(`${data.apps.length} prototip geri yüklendi`);
+  } catch (err) {
+    toast('Bu dosya bir Prova yedeği değil.');
+  }
+});
+
+/* ======================= Ayarlar ======================= */
+async function openSettings() {
+  let usage = '';
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const est = await navigator.storage.estimate();
+      usage = `${fmtSize(est.usage || 0)} kullanılıyor`;
+    }
+  } catch (e) {}
+  openSheet(`
+    <h3>Ayarlar</h3>
+    <p class="sub">${apps.length} prototip${usage ? ' · ' + usage : ''}</p>
+    <div class="toggle-row">
+      <span class="row-text">Yüzen menü düğmesi<span class="row-note">Prototip açıkken kenarda yarı saydam bir düğme gösterir. İki parmak hareketi çakışırsa işine yarar.</span></span>
+      <label class="switch"><input type="checkbox" id="set-fab" ${prefs.fab ? 'checked' : ''} aria-label="Yüzen menü düğmesi"><span class="knob"></span></label>
+    </div>
+    <div class="rows">
+      ${row('backup', 'download', 'Tümünü yedekle', 'Tek bir .json dosyası; başka telefona da taşıyabilirsin')}
+      ${row('restore', 'upload', 'Yedekten geri yükle')}
+    </div>
+    <div class="rows">
+      ${row('help', 'help', 'Nasıl kullanılır?')}
+      ${isStandalone() ? '' : row('install', 'addBox', 'Ana ekrana ekleme adımları')}
+    </div>`, {
+    onMount: s => {
+      $('#set-fab', s).onchange = e => { prefs.fab = e.target.checked; savePrefs(); };
+      s.querySelector('[data-act=backup]').onclick = () => apps.length ? backupAll() : toast('Yedeklenecek prototip yok.');
+      s.querySelector('[data-act=restore]').onclick = () => $('#file-backup').click();
+      s.querySelector('[data-act=help]').onclick = openHelp;
+      const ins = s.querySelector('[data-act=install]');
+      if (ins) ins.onclick = () => { closeSheet(); showInstall(true); };
+    }
+  });
+}
+
+function openHelp() {
+  openSheet(`
+    <h3>Nasıl kullanılır?</h3>
+    <div class="help">
+      <h4>Prototip ekleme</h4>
+      <p>Claude’dan prototipi <b>tek dosyalık HTML</b> olarak iste ve dosyayı telefonuna indir. Sonra Prova’da <b>Ekle → Dosyadan seç</b>. Kodu kopyalayıp <b>Kodu yapıştır</b> ile de ekleyebilirsin.</p>
+      <h4>Güncelleme</h4>
+      <p>Claude’la üzerinde çalışmaya devam edince yeni dosyayı aynı simgeye yükle: simgeye basılı tut, <b>Yeni sürüm yükle</b>. Prototipin kaydettiği veriler silinmez.</p>
+      <h4>Prototip açıkken menü</h4>
+      <p>Ekrana <b>iki parmakla dokun ve yarım saniye bekle</b>. Menüden ana listeye dönebilir, prototipi baştan başlatabilir ya da kenar boşluklarını açıp kapatabilirsin. Android’de geri hareketi de listeye döndürür.</p>
+      <h4>Neler çalışır, neler çalışmaz</h4>
+      <p>localStorage, IndexedDB, dokunma hareketleri, animasyonlar, cdnjs veya jsDelivr’den yüklenen kütüphaneler çalışır. Bir kez açılan kütüphaneler önbelleğe alınır, sonra internet olmadan da açılır. Claude artifact’lerindeki <b>window.storage</b> da her prototip için ayrı tutulacak şekilde çalışır.</p>
+      <p>Claude artifact önizlemesine özel yapay zekâ çağrıları (api.anthropic.com) burada çalışmaz. Prototipler tarayıcı deposunu ortak kullandığı için, iki prototip aynı localStorage anahtarını kullanırsa birbirinin verisini görebilir.</p>
+      <h4>Verilerin nerede?</h4>
+      <p>Her şey yalnızca bu telefonda, Prova’nın içinde durur. iPhone’da Safari’de eklediğin prototipler ana ekrandaki Prova’ya geçmez; prototipleri ana ekrandan açtığın Prova’nın içinden ekle. Telefon değiştirirken <b>Ayarlar → Tümünü yedekle</b>.</p>
+    </div>
+    <div class="actions"><button type="button" class="btn btn-quiet" id="help-close">Tamam</button></div>`, {
+    onMount: s => { $('#help-close', s).onclick = () => closeSheet(); }
+  });
+}
+
+/* ======================= Prototipi çalıştırma ======================= */
+function buildShim(appId) {
+  return `<script>(function(){
+var NS='prova:${appId}:',SH='prova:shared:';
+function k(key,sh){return (sh?SH:NS)+key}
+if(!window.storage){window.storage={
+get:async function(key,sh){var v=localStorage.getItem(k(key,sh));if(v===null)throw new Error('Key not found: '+key);return {key:key,value:v,shared:!!sh}},
+set:async function(key,value,sh){localStorage.setItem(k(key,sh),String(value));return {key:key,value:value,shared:!!sh}},
+delete:async function(key,sh){localStorage.removeItem(k(key,sh));return {key:key,deleted:true,shared:!!sh}},
+list:async function(prefix,sh){var pre=sh?SH:NS,base=pre+(prefix||''),out=[];for(var i=0;i<localStorage.length;i++){var kk=localStorage.key(i);if(kk&&kk.indexOf(base)===0)out.push(kk.slice(pre.length))}return {keys:out,prefix:prefix,shared:!!sh}}
+}}
+function post(m){try{m.prova=m.prova||1;parent.postMessage(m,'*')}catch(e){}}
+var t=null,sx=0,sy=0;
+function mid(e){return [(e.touches[0].clientX+e.touches[1].clientX)/2,(e.touches[0].clientY+e.touches[1].clientY)/2]}
+function cancel(){if(t){clearTimeout(t);t=null}}
+addEventListener('touchstart',function(e){if(e.touches.length===2){var m=mid(e);sx=m[0];sy=m[1];cancel();t=setTimeout(function(){t=null;post({prova:'menu'})},550)}else cancel()},{capture:true,passive:true});
+addEventListener('touchmove',function(e){if(!t)return;if(e.touches.length!==2){cancel();return}var m=mid(e);if(Math.abs(m[0]-sx)>16||Math.abs(m[1]-sy)>16)cancel()},{capture:true,passive:true});
+addEventListener('touchend',cancel,{capture:true,passive:true});
+addEventListener('touchcancel',cancel,{capture:true,passive:true});
+addEventListener('keydown',function(e){if(e.key==='Escape'&&e.shiftKey)post({prova:'menu'})},true);
+function bg(){try{var c=getComputedStyle(document.body).backgroundColor;if(!c||c==='transparent'||/rgba\\(.*,\\s*0\\)$/.test(c))c=getComputedStyle(document.documentElement).backgroundColor;var m=document.querySelector('meta[name="theme-color"]');post({prova:'bg',color:c,theme:m&&m.content})}catch(e){}}
+addEventListener('load',function(){bg();setTimeout(bg,800)});
+})();<\/script>`;
+}
+function injectShim(html, shim) {
+  const head = /<head(\s[^>]*)?>/i, root = /<html(\s[^>]*)?>/i;
+  if (head.test(html)) return html.replace(head, m => m + shim);
+  if (root.test(html)) return html.replace(root, m => m + '<head>' + shim + '</head>');
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + shim + '</head><body>' + html + '</body></html>';
+}
+function clearAppStorage(id) {
+  try {
+    const pre = 'prova:' + id + ':';
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(pre)) keys.push(k); }
+    keys.forEach(k => localStorage.removeItem(k));
+  } catch (e) {}
+}
+
+let current = null;   // { id, url, stage, frame, iconEl }
+const themeMeta = $('meta[name="theme-color"]');
+const defaultTheme = () => getComputedStyle(document.documentElement).getPropertyValue('--mat').trim() || '#1F4A3D';
+
+async function openApp(id, iconEl) {
+  if (current) return;
+  const meta = apps.find(a => a.id === id);
+  if (!meta) return;
+  const html = await DB.html(id);
+  if (html == null) { toast('Bu prototipin dosyası bulunamadı.'); return; }
+  closeSheet(true);
+
+  const doc = injectShim(html, buildShim(id));
+  const url = URL.createObjectURL(new Blob([doc], { type: 'text/html;charset=utf-8' }));
+
+  const stage = document.createElement('div');
+  stage.id = 'stage';
+  if (meta.safeArea !== false) stage.classList.add('safe');
+  stage.style.background = meta.lastBg || '#ffffff';
+  const frame = makeFrame(meta.name);
+  stage.append(frame);
+  if (prefs.fab) stage.append(makeFab());
+  document.body.append(stage);
+  document.body.style.overflow = 'hidden';
+  frame.src = url;
+  if (meta.lastBg) themeMeta.setAttribute('content', meta.lastBg);
+
+  current = { id, url, stage, frame, iconEl: iconEl || document.querySelector(`.tile[data-id="${id}"] .app-icon`) };
+  history.pushState({ prova: 'app', id }, '');
+  animateStage(true);
+
+  if (prefs.hintCount < 3) {
+    prefs.hintCount++; savePrefs();
+    setTimeout(() => current && toast('Menü için iki parmakla dokun ve bekle'), 900);
+  }
+}
+
+function animateStage(opening) {
+  const { stage, iconEl } = current || {};
+  if (!stage) return Promise.resolve();
+  if (reduceMotion) {
+    return stage.animate([{ opacity: opening ? 0 : 1 }, { opacity: opening ? 1 : 0 }], { duration: 160, fill: 'forwards' }).finished.catch(() => {});
+  }
+  const vw = innerWidth, vh = innerHeight;
+  let from = 'scale(.9)', radius = '28px';
+  if (iconEl && iconEl.isConnected) {
+    const r = iconEl.getBoundingClientRect();
+    const s = r.width / vw;
+    const dx = r.left + r.width / 2 - vw / 2, dy = r.top + r.height / 2 - vh / 2;
+    from = `translate(${dx}px, ${dy}px) scale(${s}, ${r.height / vh})`;
+    radius = `${15 / s}px`;
+  }
+  const frames = [
+    { transform: from, borderRadius: radius, opacity: 0.4 },
+    { transform: 'none', borderRadius: '0px', opacity: 1 }
+  ];
+  if (!opening) frames.reverse();
+  stage.style.overflow = 'hidden';
+  return stage.animate(frames, { duration: opening ? 340 : 280, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' })
+    .finished.then(() => { if (opening) stage.style.overflow = ''; }).catch(() => {});
+}
+
+async function closeApp(fromPop = false) {
+  if (!current) return;
+  closeSheet(true);
+  const c = current;
+  await animateStage(false);
+  c.stage.remove();
+  URL.revokeObjectURL(c.url);
+  current = null;
+  document.body.style.overflow = '';
+  themeMeta.setAttribute('content', defaultTheme());
+  if (!fromPop && history.state && history.state.prova === 'app') {
+    ignoreNextPop = true;
+    history.back();
+  }
+}
+let ignoreNextPop = false;
+addEventListener('popstate', () => {
+  if (ignoreNextPop) { ignoreNextPop = false; return; }
+  if (activeSheet && current) { closeSheet(); history.pushState({ prova: 'app', id: current.id }, ''); return; }
+  if (current) closeApp(true);
+  else if (activeSheet) closeSheet();
+});
+
+function makeFrame(title) {
+  const frame = document.createElement('iframe');
+  frame.setAttribute('title', title);
+  frame.setAttribute('allow', 'clipboard-read; clipboard-write; fullscreen; autoplay; camera; microphone; geolocation; accelerometer; gyroscope');
+  frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads allow-pointer-lock');
+  return frame;
+}
+// Çerçeveyi yeniden oluşturuyoruz: böylece eski çerçevenin geçmiş kayıtları da silinir
+// ve Android geri hareketi doğrudan listeye döner.
+function restartApp() {
+  if (!current) return;
+  closeSheet(true);
+  const old = current.frame;
+  const frame = makeFrame(old.title);
+  old.replaceWith(frame);
+  frame.src = current.url;
+  current.frame = frame;
+}
+
+function toggleSafe() {
+  if (!current) return;
+  const meta = apps.find(a => a.id === current.id);
+  meta.safeArea = meta.safeArea === false;
+  current.stage.classList.toggle('safe', meta.safeArea);
+  DB.putMeta(meta);
+}
+
+function openRuntimeMenu() {
+  if (!current) return;
+  const a = apps.find(x => x.id === current.id);
+  if (navigator.vibrate) navigator.vibrate(10);
+  $('#toast').classList.remove('show');
+  openSheet(`
+    <div class="sheet-head">${iconTile(a)}<div><h3>${esc(a.name)}</h3><p class="sub">sürüm ${a.version || 1}</p></div></div>
+    <div class="rows">
+      ${row('home', 'back', 'Listeye dön')}
+      ${row('restart', 'refresh', 'Baştan başlat', 'Kayıtlı veriler silinmez')}
+      ${row('safe', 'frame', a.safeArea !== false ? 'Kenar boşluklarını kapat' : 'Kenar boşluklarını aç', a.safeArea !== false ? 'Prototip ekranın en üstüne kadar uzanır' : 'Çentik ve alt çubuk için boşluk bırakır')}
+    </div>`, {
+    overStage: true,
+    onMount: s => {
+      s.querySelector('[data-act=home]').onclick = () => closeApp();
+      s.querySelector('[data-act=restart]').onclick = restartApp;
+      s.querySelector('[data-act=safe]').onclick = () => { toggleSafe(); closeSheet(); };
+    }
+  });
+}
+
+function makeFab() {
+  const b = document.createElement('button');
+  b.id = 'fab'; b.type = 'button'; b.setAttribute('aria-label', 'Prova menüsü');
+  b.innerHTML = ICONS.dots;
+  let y0 = 0, top0 = 0, moved = false;
+  b.addEventListener('pointerdown', e => {
+    b.setPointerCapture(e.pointerId);
+    y0 = e.clientY; top0 = b.offsetTop; moved = false; b.style.opacity = '.85';
+  });
+  b.addEventListener('pointermove', e => {
+    if (!b.hasPointerCapture(e.pointerId)) return;
+    const dy = e.clientY - y0;
+    if (Math.abs(dy) > 6) moved = true;
+    if (moved) b.style.top = Math.max(40, Math.min(innerHeight - 80, top0 + dy)) + 'px';
+  });
+  b.addEventListener('pointerup', () => { b.style.opacity = ''; if (!moved) openRuntimeMenu(); });
+  return b;
+}
+
+addEventListener('message', e => {
+  if (!current || e.source !== current.frame.contentWindow) return;
+  const d = e.data;
+  if (!d || !d.prova) return;
+  if (d.prova === 'menu') openRuntimeMenu();
+  if (d.prova === 'bg') {
+    const color = d.theme || d.color;
+    if (!color || /rgba\(.*,\s*0\)$/.test(color)) return;
+    current.stage.style.background = color;
+    themeMeta.setAttribute('content', color);
+    const meta = apps.find(a => a.id === current.id);
+    if (meta && meta.lastBg !== color) { meta.lastBg = color; DB.putMeta(meta); }
+  }
+});
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (activeSheet) closeSheet();
+    else if (current) openRuntimeMenu();
+  }
+});
+
+/* ======================= Kurulum ekranı ======================= */
+let deferredPrompt = null;
+addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!$('#install').classList.contains('hidden')) showInstall(true);
+});
+addEventListener('appinstalled', () => { deferredPrompt = null; toast('Prova ana ekrana eklendi'); });
+
+function showInstall(force) {
+  const box = $('#install');
+  let body;
+  if (isIOS) {
+    body = `
+      <ol class="steps">
+        <li>Bu sayfayı <b>Safari</b>’de açtığından emin ol, sonra <span class="k">${ICONS.iosShare}</span> <b>Paylaş</b>’a dokun. Göremiyorsan adres çubuğundaki <b>•••</b> menüsünü aç.</li>
+        <li>Listeden <b>Ana Ekrana Ekle</b>’yi seç. “Web uygulaması olarak aç” seçeneği çıkarsa açık bırak.</li>
+        <li>Ana ekrandaki <b>Prova</b> simgesinden aç ve prototiplerini oradan ekle.</li>
+      </ol>
+      <p class="note">iPhone, ana ekrandaki uygulamaya Safari’den ayrı bir depolama alanı verir. Safari’de eklediğin prototipler oraya geçmez.</p>`;
+  } else if (isAndroid) {
+    body = deferredPrompt ? `
+      <button type="button" class="btn btn-primary btn-block" id="btn-install" style="margin-bottom:22px">${ICONS.addBox} Uygulamayı yükle</button>
+      <p class="note">Yükledikten sonra Prova’yı ana ekrandaki simgesinden aç.</p>` : `
+      <ol class="steps">
+        <li>Chrome’da sağ üstteki <b>⋮</b> menüsüne dokun.</li>
+        <li><b>Uygulamayı yükle</b> veya <b>Ana ekrana ekle</b>’yi seç.</li>
+        <li>Ana ekrandaki <b>Prova</b> simgesinden aç.</li>
+      </ol>`;
+  } else {
+    body = `
+      <p class="note">Prova telefonda kullanılmak için tasarlandı. Bu adresi telefonunda aç ve ana ekrana ekle. Bilgisayarda deneme yapmak için tarayıcıda devam edebilirsin; prototip açıkken menü için Esc’ye bas.</p>
+      ${deferredPrompt ? `<button type="button" class="btn btn-primary btn-block" id="btn-install" style="margin-bottom:22px">${ICONS.addBox} Uygulamayı yükle</button>` : ''}`;
+  }
+  box.innerHTML = `
+    <div class="install-inner">
+      <img class="install-mark" src="icons/icon-192.png" alt="">
+      <h1>Önce Prova’yı ana ekrana ekle</h1>
+      <p class="lede">Ana ekrandan açıldığında Prova ve içindeki prototipler tarayıcı çubukları olmadan, tam ekran çalışır.</p>
+      ${body}
+      <button type="button" class="link-btn" id="btn-skip">Şimdilik tarayıcıda devam et</button>
+    </div>`;
+  box.classList.remove('hidden');
+  const ib = $('#btn-install', box);
+  if (ib) ib.onclick = async () => {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (outcome === 'accepted') box.classList.add('hidden');
+    else showInstall(true);
+  };
+  $('#btn-skip', box).onclick = () => { prefs.skipInstall = true; savePrefs(); box.classList.add('hidden'); };
+}
+
+/* ======================= Service worker ======================= */
+function registerSW() {
+  if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing;
+      if (!w) return;
+      w.addEventListener('statechange', () => {
+        if (w.state === 'installed' && navigator.serviceWorker.controller) {
+          toast('Prova’nın yeni sürümü hazır', 'Yenile', () => w.postMessage('skipWaiting'));
+        }
+      });
+    });
+  }).catch(() => {});
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading || current) return;
+    reloading = true; location.reload();
+  });
+}
+
+/* ======================= Başlat ======================= */
+(async function init() {
+  try { await loadApps(); }
+  catch (e) { apps = []; toast('Depolama açılamadı. Gizli sekmede olabilirsin.', null, null, 7000); }
+  renderHome();
+  themeMeta.setAttribute('content', defaultTheme());
+  if (!isStandalone() && !prefs.skipInstall) showInstall();
+  registerSW();
+})();
+
+})();
+</script>
+</body>
+</html>
